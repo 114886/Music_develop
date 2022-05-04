@@ -20,7 +20,11 @@ const router = createRouter({
             {
               path: '/home/findmusic/find',
               component: () => import('../views/FindMusic/Find.vue'),
-            }
+            },
+            {
+              path: '/home/findmusic/musicList',
+              component: () => import('../views/FindMusic/MusicLIst.vue'),
+            },
           ]
         }
       ]
