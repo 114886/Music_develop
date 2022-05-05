@@ -3,8 +3,12 @@ import http from '../plugins/http.js'
 
 //首页轮播
 export function getBanner(params){
-  // console.log(params);
  return http.get('/banner', params)
+}
+
+// 推荐歌单
+export function getPersonalized(params){
+ return http.get('/personalized', params)
 }
    
 //get post 传参调用方式
