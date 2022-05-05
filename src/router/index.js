@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+
 const routerHistory = createWebHistory()
 const router = createRouter({
   history: routerHistory,
@@ -12,6 +13,10 @@ const router = createRouter({
       redirect: '/home/findmusic',
       component: () => import('../views/Home.vue'),
       children: [
+        {
+          path:'/musiclist/:id',
+          component: () => import('../components/Music.vue'),
+        },
         {
           path: '/home/findmusic',
           redirect: '/home/findmusic/find',

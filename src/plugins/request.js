@@ -1,4 +1,6 @@
 import axios from 'axios'
+import store from '../store'
+import { diffTokenTime } from './auth'
 
 export function request(config) {
   // 创建axios的实例
@@ -8,7 +10,13 @@ export function request(config) {
   })
   // 请求拦截器配置
   instance.interceptors.request.use(config => {
-    // config.headers.cookie = window.sessionStorage.getItem('token')
+    if (localStorage.getItem('token')) {
+      if (diffTokenTime()) {
+        store.dispatch('logout')
+        return Promise.reject(new Error('token 失效了'))
+      }
+    }
+    // config.headers.Authorization = localStorage.getItem('token')
     return config
   }, error => {
     return Promise.error(error)
@@ -30,6 +38,7 @@ export function request(config) {
     //   default:
     //     return Promise.reject(error)
     // }
+    alert('token失效啦！请重新登录')
     return Promise.reject(error)
   })
   // 发送真正的网络请求
