@@ -38,7 +38,6 @@ export function request(config) {
     //   default:
     //     return Promise.reject(error)
     // }
-    alert('token失效啦！请重新登录')
     return Promise.reject(error)
   })
   // 发送真正的网络请求

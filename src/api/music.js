@@ -6,7 +6,7 @@ export function getMusicList(params) {
 }
 
 export function getMusic(params) {
-  return http.get('/playlist/track/all', params)
+  return http.get('/song/detail', params)
 }
 
 

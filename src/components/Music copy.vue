@@ -66,7 +66,7 @@
         highlight-current-row
         v-infinite-scroll="load"
         :infinite-scroll-disabled="controlList"
-        :infinite-scroll-distance="1500"
+        :infinite-scroll-distance="1000"
         :infinite-scroll-immediate="false"
       >
         <el-table-column
@@ -111,26 +111,28 @@ let par = {
 };
 
 let params = {
-  ids: "",
+  ...par,
+  limit: 10,
+  offset: 1,
 };
 
 let controlList = ref(true);
 let isMore = ref(true);
 const MusicList = ref([]);
 const MusicListCent = ref({});
-const allMusic = ref([]);
+
 getMusicList(par).then((res) => {
+  console.log(res);
   MusicListCent.value = res.playlist;
-  MusicList.value = res.playlist.tracks;
-  MusicList.value.forEach((item) => {
-    item.dt = handleMusicTime(item.dt);
-  });
-  res.playlist.trackIds.forEach((item) => {
-    if (params.ids == "") {
-      params.ids = item.id;
-    } else {
-      params.ids = params.ids + "," + item.id;
-    }
+});
+
+const initMusic = () => {
+  getMusic(params).then((res) => {
+    let x = res.songs;
+    x.forEach((item) => {
+      item.dt = handleMusicTime(item.dt);
+    });
+    MusicList.value.push(...x);
   });
   if (store.state.userprofile != undefined && isMore) {
     controlList.value = false;
@@ -139,26 +141,16 @@ getMusicList(par).then((res) => {
     controlList.value = true;
     isMore.value = true;
   }
-  getMusic(params).then((res) => {
-    res.songs.forEach((item) => {
-      item.dt = handleMusicTime(item.dt);
-    });
-    for (let i = 0; i < res.songs.length; i += 10) {
-      allMusic.value.push(res.songs.slice(i, i + 10));
-    }
-    // console.log(allMusic.value);
-  });
-});
+};
+initMusic();
 
-let num = 0;
 const load = () => {
-  if (allMusic.value.length)
-    if (allMusic.value.length > num) {
-      num++;
-      MusicList.value.push(...allMusic.value[num]);
-    } else {
-      controlList.value = true;
-    }
+  if (MusicList.value.length < 110) {
+    params.offset += 1;
+    initMusic();
+  } else {
+    controlList.value = true;
+  }
 };
 </script>
 
