@@ -68,6 +68,14 @@
         :infinite-scroll-disabled="controlList"
         :infinite-scroll-distance="1500"
         :infinite-scroll-immediate="false"
+        @row-dblclick="clickRow"
+        @cell-click="clickCell"
+        lazy
+        :row-key="
+          (row) => {
+            return row.id;
+          }
+        "
       >
         <el-table-column
           type="index"
@@ -91,6 +99,9 @@ import { ref } from "vue";
 import { getMusic, getMusicList } from "../api/music";
 import { handleMusicTime, formatDate, handleNum } from "../plugins/utils";
 const store = useStore();
+const clickRow = (row) => {
+  store.commit("music/setPlaylist", [row]);
+};
 const handleIndex = (index) => {
   index += 1;
   if (index < 10) {
@@ -119,12 +130,19 @@ let isMore = ref(true);
 const MusicList = ref([]);
 const MusicListCent = ref({});
 const allMusic = ref([]);
+
 getMusicList(par).then((res) => {
+  // console.log(res);
   MusicListCent.value = res.playlist;
   MusicList.value = res.playlist.tracks;
   MusicList.value.forEach((item) => {
     item.dt = handleMusicTime(item.dt);
   });
+  // 发送准备播放得歌单
+  // console.log(...MusicList.value);
+  // store.commit("music/setPlaylist", MusicList.value);
+  // console.log(store.state.music.playlist);
+  // ...
   res.playlist.trackIds.forEach((item) => {
     if (params.ids == "") {
       params.ids = item.id;

@@ -7,10 +7,28 @@ export default {
   },
   mutations: {
     setPlaylist(state, value) {
-      state.playlist = value
+      state.playlist.push(...value)
+    },
+    setPlayIndex(state, value) {
+      // console.log(value);
+      state.playCurrentIndex = value
     }
   },
   actions: {
-    
+
   }
 }
+// {
+//   id:1500377533,
+//   name:'不要让我后悔',
+//   dt: "04:29",
+//   al:{
+//     name:'出没地带',
+//     picUrl:'http://p3.music.126.net/gRMWUKU2ScajuiJDcAdX4Q==/109951165517115227.jpg',
+//   },
+//   ar:[
+//     {
+//       name:'孙盛希'
+//     }
+//   ]
+// }
