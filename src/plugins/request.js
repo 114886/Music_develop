@@ -1,6 +1,7 @@
 import axios from 'axios'
 import store from '../store'
 import { diffTokenTime } from './auth'
+import { ElMessage } from 'element-plus'
 
 export function request(config) {
   // 创建axios的实例
@@ -13,7 +14,11 @@ export function request(config) {
     if (localStorage.getItem('token')) {
       if (diffTokenTime()) {
         store.dispatch('logout')
-        return Promise.reject(new Error('token 失效了'))
+        ElMessage({
+          message: '登录已过期！请重新登录！',
+          type: 'warning',
+        })
+        // return Promise.reject(new Error('token 失效了'))
       }
     }
     // config.headers.Authorization = localStorage.getItem('token')

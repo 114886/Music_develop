@@ -36,6 +36,7 @@ import PlayControl from "../components/PlayControl.vue";
 .el-footer {
   height: 70px;
   border-top: solid 1px #dcdfe6;
+  z-index: 99;
 }
 
 
