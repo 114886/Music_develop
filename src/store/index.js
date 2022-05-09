@@ -7,10 +7,18 @@ import music from './music';
 const store = createStore({
   state: {
     musicId: JSON.parse(sessionStorage.getItem('musicId')) || undefined,
+    isPlay: false,
     userprofile: JSON.parse(sessionStorage.getItem('userprofile')) || undefined,
     token: localStorage.getItem('token') || undefined,
+    durationNum: 0
   },
   mutations: {
+    getDurationNum(state, value) {
+      state.durationNum = value
+    },
+    changeIsPlay(state, value) {
+      state.isPlay = value
+    },
     getMusicId(state, id) {
       state.musicId = id
       sessionStorage.setItem('musicId', JSON.stringify(id))

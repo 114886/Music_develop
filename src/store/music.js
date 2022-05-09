@@ -9,13 +9,23 @@ export default {
     setPlaylist(state, value) {
       state.playlist.push(...value)
     },
+    changePlaylist(state, value) {
+      state.playlist = [...value]
+    },
     setPlayIndex(state, value) {
-      // console.log(value);
       state.playCurrentIndex = value
     }
   },
   actions: {
-
+    changePlayList(context, value) {
+      for (let i = 0; i < context.state.playlist.length; i++) {
+        if (context.state.playlist[i].id === value.id) {
+          context.commit('setPlayIndex', i)
+          return;
+        }
+      }
+      context.commit('setPlaylist', [value])
+    }
   }
 }
 // {

@@ -99,9 +99,7 @@ import { ref } from "vue";
 import { getMusic, getMusicList } from "../api/music";
 import { handleMusicTime, formatDate, handleNum } from "../plugins/utils";
 const store = useStore();
-const clickRow = (row) => {
-  store.commit("music/setPlaylist", [row]);
-};
+
 const handleIndex = (index) => {
   index += 1;
   if (index < 10) {
@@ -138,11 +136,6 @@ getMusicList(par).then((res) => {
   MusicList.value.forEach((item) => {
     item.dt = handleMusicTime(item.dt);
   });
-  // 发送准备播放得歌单
-  // console.log(...MusicList.value);
-  // store.commit("music/setPlaylist", MusicList.value);
-  // console.log(store.state.music.playlist);
-  // ...
   res.playlist.trackIds.forEach((item) => {
     if (params.ids == "") {
       params.ids = item.id;
@@ -157,16 +150,39 @@ getMusicList(par).then((res) => {
     controlList.value = true;
     isMore.value = true;
   }
+  // 发送准备播放得歌单
+  // console.log(...MusicList.value);
+  // if (isMore.value) {
+  //   store.commit("music/changePlaylist", MusicList.value);
+  // }
+  // console.log(store.state.music.playlist);
+  // ...
   getMusic(params).then((res) => {
     res.songs.forEach((item) => {
       item.dt = handleMusicTime(item.dt);
     });
+    // if (!isMore.value) {
+    //   store.commit("music/changePlaylist", res.songs);
+    // }
     for (let i = 0; i < res.songs.length; i += 10) {
       allMusic.value.push(res.songs.slice(i, i + 10));
     }
     // console.log(allMusic.value);
   });
 });
+
+let zhunbei = 1;
+const clickRow = (row) => {
+  if (zhunbei === 1) {
+    zhunbei++;
+    if (isMore.value) {
+      store.commit("music/changePlaylist", MusicList.value);
+    } else {
+      store.commit("music/changePlaylist", res.songs);
+    }
+  }
+  store.dispatch("music/changePlayList", row);
+};
 
 let num = 0;
 const load = () => {

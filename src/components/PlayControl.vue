@@ -46,14 +46,32 @@
               ? `https://music.163.com/song/media/outer/url?id=${playlist[playCurrentIndex].id}.mp3`
               : ''
           "
+          @timeupdate="timeupdate"
         ></audio>
+        <div class="slider">
+          <span>{{ handleMusicTime(lastSecond) }}</span>
+          <el-slider
+            class="progressSlider"
+            v-model="timeProgress"
+            :show-tooltip="false"
+            @change="changeProgress"
+            :disabled="playlist.length == 0"
+          />
+          <span>{{ handleMusicTime(store.state.durationNum) }}</span>
+        </div>
       </div>
     </div>
     <div class="right">
       <div class="volume">
-        <svg class="icon" aria-hidden="true">
+        <svg class="icon" aria-hidden="true" ref="icon">
           <use xlink:href="#icon-24gf-volumeMiddle"></use>
         </svg>
+        <el-slider
+          class="progressSlider"
+          v-model="volume"
+          @input="changeVolume"
+          :show-tooltip="false"
+        />
       </div>
       <svg class="icon" aria-hidden="true" @click="musicTable = true">
         <use xlink:href="#icon-yinleliebiao"></use>
@@ -84,15 +102,16 @@
 </template>
 
 <script setup>
-import { computed, getCurrentInstance, onMounted, ref, watch } from "vue";
+import { computed, getCurrentInstance, ref, watch } from "vue";
 import { useStore } from "vuex";
 import MusicCont from "./MusicCont/index.vue";
+import { returnSecond, handleMusicTime } from "../plugins/utils";
 
 const MusicCenter = ref(false);
 
 const store = useStore();
 const playlist = computed(() => store.state.music.playlist);
-// console.log(playlist);
+
 const playCurrentIndex = computed(() => store.state.music.playCurrentIndex);
 const { proxy } = getCurrentInstance();
 const palyButton = ref("#icon-bofang1");
@@ -103,13 +122,98 @@ const qwe = (row) => {
   palyButton.value = "#icon-zanting";
 };
 
-const musicTable = ref(false);
+// 进度条
+const lastSecond = ref(0);
+const timeProgress = ref(0); // 进度条的位置
+const currentTime = ref(0);
+const changeProgress = (e) => {
+  const durationNum = store.state.durationNum;
+  // console.log(e);
+  // 修改当前播放时间
+  currentTime.value = Math.floor((e / 100) * durationNum);
+  // 改变audio的实际当前播放时间
+  proxy.$refs.audio.currentTime = currentTime.value;
+};
+const timeupdate = () => {
+  const durationNum = store.state.durationNum;
+  // console.log(durationNum);
+  let time = proxy.$refs.audio.currentTime;
+  // console.log(time + "  " + 2);
+  // 将当前播放时间保存到vuex  如果保存到vuex这步节流,会导致歌词不精准,误差最大有1s
+  // this.$store.commit("updateCurrentTime", time);
+  // console.log(lastSecond.value);
+  time = Math.floor(time);
+  if (time !== lastSecond.value) {
+    // console.log(time + "   " + 3);
+    lastSecond.value = time;
+    currentTime.value = time;
+    // 计算进度条的位置
+    timeProgress.value = Math.floor((time / durationNum) * 100);
+    // console.log(durationNum);
+    // console.log(timeProgress.value);
+  }
+  if (time == durationNum) {
+    // console.log(playlist.value.length);
+    if (playlist.value.length == 1) {
+      proxy.$refs.audio.currentTime = 0;
+    } else {
+      if (playlist.value.length - 1 == playCurrentIndex.value) {
+        store.commit("music/setPlayIndex", 0);
+      } else {
+        store.commit("music/setPlayIndex", playCurrentIndex.value + 1);
+      }
+    }
+  }
+};
+//....
 
+// 音量
+const volume = ref(30);
+
+// 拖动音量条的回调
+const changeVolume = (e) => {
+  // 改变audio的音量
+  // input事件 实时触发
+  let icon = "";
+  proxy.$refs.audio.volume = e / 100;
+  // console.log(e);
+  if (e < 20) {
+    if (e == 0) {
+      icon = "icon-24gf-volumeDisable";
+    } else {
+      icon = "icon-24gf-volumeLow";
+    }
+  } else if (e >= 20 && e < 60) {
+    icon = "icon-24gf-volumeMiddle";
+  } else {
+    icon = "icon-24gf-volumeHigh";
+  }
+  proxy.$refs.icon.innerHTML = `<use xlink:href="#${icon}" data-v-e8cefdee=""></use>`;
+};
+
+//...
+
+const musicTable = ref(false);
+watch(
+  playCurrentIndex,
+  () => {
+    store.commit(
+      "getDurationNum",
+      returnSecond(playlist.value[playCurrentIndex.value].dt)
+    );
+  },
+  { deep: true }
+);
 let m = 1;
 watch(
   playlist,
   () => {
-    // console.log("执行了");
+    // console.log(playlist.value[playCurrentIndex.value]);
+    store.commit(
+      "getDurationNum",
+      returnSecond(playlist.value[playCurrentIndex.value].dt)
+    );
+    // console.log(lastSecond);
     if (m === 1) {
       playMusic();
     }
@@ -123,9 +227,11 @@ watch(
 const playMusic = () => {
   // console.log([proxy.$refs.audio]);
   if (proxy.$refs.audio.paused) {
+    store.commit("changeIsPlay", true);
     proxy.$refs.audio.play();
     palyButton.value = "#icon-zanting";
   } else {
+    store.commit("changeIsPlay", false);
     proxy.$refs.audio.pause();
     palyButton.value = "#icon-bofang1";
   }
@@ -185,18 +291,38 @@ const playMusic = () => {
     flex-direction: column;
     align-items: center;
     .c-top {
+      margin-top: 6px;
       .icon {
         width: 70px;
-        height: 25px;
+        height: 20px;
         color: #27d0d8;
+      }
+    }
+    .c-bom {
+      .slider {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 380px;
+        .progressSlider {
+          width: 70%;
+        }
       }
     }
   }
   .right {
     display: flex;
     align-items: center;
+    width: 150px;
+    justify-content: space-between;
     .volume {
-      width: 70px;
+      width: 110px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .progressSlider {
+        width: 60%;
+      }
     }
     .icon {
       width: 25px;
