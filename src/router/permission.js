@@ -2,7 +2,7 @@ import store from '../store/index'
 import router from '.'
 import { ElMessage } from 'element-plus'
 
-const BlackList = ['/tuijian']
+const BlackList = ['/recommend']
 
 router.beforeEach((to, from, next) => {
   if (store.state.userprofile != undefined) {

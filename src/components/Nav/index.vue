@@ -145,8 +145,8 @@ watchEffect(() => {
   }
 });
 const form = ref({
-  phone: "15544886493",
-  password: "hzc1230..",
+  phone: "",
+  password: "",
 });
 
 const rules = reactive({
