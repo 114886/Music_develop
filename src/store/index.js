@@ -3,6 +3,7 @@ import { createStore } from 'vuex'
 import { setTokenTime } from '../plugins/auth'
 import { loginApi } from "../api/login";
 import music from './music';
+import search from './search';
 
 const store = createStore({
   state: {
@@ -52,7 +53,7 @@ const store = createStore({
     }
   },
   modules: {
-    music
+    music, search
   }
 })
 

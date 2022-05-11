@@ -18,6 +18,10 @@ const router = createRouter({
           component: () => import('../components/Music.vue'),
         },
         {
+          path: '/search/:id',
+          component: () => import('../views/Search/searchMusic.vue'),
+        },
+        {
           path: '/home/findmusic',
           redirect: '/home/findmusic/find',
           component: () => import('../views/FindMusic/FindM.vue'),
@@ -30,10 +34,14 @@ const router = createRouter({
               path: '/home/findmusic/musicList',
               component: () => import('../views/FindMusic/MusicLIst.vue'),
             },
+            {
+              path: '/home/findmusic/rankingList',
+              component: () => import('../views/FindMusic/RankingList.vue'),
+            },
           ]
         }
       ]
-    },
+    }
   ]
 })
 
