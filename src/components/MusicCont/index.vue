@@ -6,20 +6,42 @@
         <div class="needle" :class="store.state.isPlay ? 'needleRotate' : ''">
           <img src="/MusicDetailCard/needle.png" alt="" />
         </div>
-        <div class="disc">
+        <div class="disc" :class="store.state.isPlay ? 'rotate' : ''">
           <img src="/MusicDetailCard/disc.png" alt="" />
           <img :src="playDetail.al.picUrl" alt="" class="musicAvatar" />
         </div>
       </div>
-      <div class="geci">歌词轮播位置</div>
+      <div class="geci">
+        <div class="title">
+          <div class="musicName">{{ playDetail.name }}</div>
+          <div class="album">{{ playDetail.al.name }}</div>
+          <div class="singer">{{ playDetail.ar[0].name }}</div>
+        </div>
+        <div class="lyrics">
+          <p
+            class="lyricsItem"
+            ref="playLyric"
+            :class="{
+              active:
+                store.state.music.currentTime * 1000 < item.pre &&
+                store.state.music.currentTime * 1000 >= item.time,
+            }"
+            v-for="(item, i) in store.getters['music/MusicLyric']"
+            :key="i"
+          >
+            {{ item.lyric.replace(/]/g, "") }}
+          </p>
+        </div>
+      </div>
     </div>
     <div class="otherContent">评论区（暂未实现）</div>
   </div>
 </template>
 
 <script setup>
-import { defineProps, ref } from "vue";
+import { defineProps, getCurrentInstance, ref, watchEffect } from "vue";
 import { useStore } from "vuex";
+
 const store = useStore();
 const props = defineProps({
   playDetail: {
@@ -27,10 +49,52 @@ const props = defineProps({
     required: true,
   },
 });
+// console.log(store.getters["music/MusicLyric"]);
+const { proxy } = getCurrentInstance();
+
+// 实现歌词滚动
+let placeholderHeight = 0;
+const lyricScroll = (currentLyric) => {
+  // 获取歌词item
+  let lyricsArr = document.querySelectorAll(".lyricsItem");
+  // 获取歌词框
+  let lyrics = document.querySelector(".lyrics");
+  // placeholder的高度
+  if (placeholderHeight == 0) {
+    placeholderHeight = lyricsArr[0].offsetTop - lyrics.offsetTop;
+  }
+  //   歌词item在歌词框的高度 = 歌词框的offsetTop - 歌词item的offsetTop
+  //   console.log(currentLyric);
+  if (lyricsArr[currentLyric - 1]) {
+    let distance = lyricsArr[currentLyric - 1].offsetTop - lyrics.offsetTop;
+    //   lyricsArr[currentLyric].scrollIntoView();
+    lyrics.scrollTo({
+      behavior: "smooth",
+      top: distance - placeholderHeight,
+    });
+  }
+};
+watchEffect(() => {
+  const time = store.state.music.currentTime;
+  let list = [proxy.$refs.playLyric][0];
+  for (let i in list) {
+    if (list[i].classList.length === 2) {
+      lyricScroll(i);
+    }
+  }
+});
 </script>
 
 <style lang="scss" scoped>
 // :style="{ backgroundImage: `url(${props.playDetail.al.picUrl})` }"
+// *::-webkit-scrollbar-thumb {
+//   border-radius: 10px;
+//   background-color: #ccc;
+// }
+// *::-webkit-scrollbar {
+//   width: 8px;
+//   height: 8px;
+// }
 .needleRotate {
   transform-origin: 5.3px 5.3px;
   transform: rotate(22deg);
@@ -64,12 +128,12 @@ const props = defineProps({
     justify-content: center;
     .cipan {
       margin-top: 60px;
-      width: 220px;
+      width: 400px;
       position: relative;
       .needle {
         position: relative;
-        left: 50%;
-        width: 88px;
+        left: 40%;
+        width: 120px;
         height: 72px;
         transition: all 1s;
         transform-origin: 5.3px 5.3px;
@@ -78,9 +142,12 @@ const props = defineProps({
           width: 100%;
         }
       }
+      .rotate {
+        animation: rotate 10s linear infinite;
+      }
       .disc {
-        width: 220px;
-        height: 220px;
+        width: 273px;
+        height: 273px;
         position: relative;
         top: -12px;
         img {
@@ -88,16 +155,75 @@ const props = defineProps({
         }
         .musicAvatar {
           position: absolute;
-          top: 35px;
-          left: 35px;
-          width: 150px;
+          top: 40px;
+          left: 40px;
+          width: 190px;
           z-index: -1;
+        }
+      }
+    }
+    .geci {
+      width: 350px;
+      .title {
+        width: 100%;
+        text-align: center;
+        font-size: 12px;
+        margin: 30px 0 15px;
+        color: #919191;
+        .musicName {
+          font-size: 23px;
+          color: #161616;
+          margin: 7px 0;
+        }
+        .album,
+        .singer {
+          margin: 7px 0;
+        }
+      }
+      .lyrics {
+        width: 100%;
+        height: 275px;
+        font-size: 12px;
+        text-align: center;
+        overflow-y: scroll;
+        &::-webkit-scrollbar {
+          display: none;
+        }
+        .lyricsItem {
+          font-size: 16px;
+          height: 20px;
+          margin: 25px 20px;
+          transition: all 0.5s;
+          line-height: 20px;
+          font-weight: 200;
+        }
+        .active {
+          font-weight: 600;
+          font-size: 18px;
+          color: black;
         }
       }
     }
   }
   .otherContent {
     margin: 0 auto;
+  }
+  @keyframes rotate {
+    0% {
+      -webkit-transform: rotate(0deg);
+    }
+    25% {
+      -webkit-transform: rotate(90deg);
+    }
+    50% {
+      -webkit-transform: rotate(180deg);
+    }
+    75% {
+      -webkit-transform: rotate(270deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+    }
   }
 }
 </style>

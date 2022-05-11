@@ -5,10 +5,45 @@
     </div>
     <div class="nav-center">
       <div class="buttons">
-        <svg class="icon" aria-hidden="true">
+        <svg class="icon" aria-hidden="true" @click="searchMusic">
           <use xlink:href="#icon-sousuo"></use>
         </svg>
-        <el-input v-model="search" placeholder="请输入查询内容" />
+        <el-popover :width="400" trigger="click" placement="bottom">
+          <h1 class="h1">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-resou1"></use>
+            </svg>
+            <svg class="icon icon2" aria-hidden="true">
+              <use xlink:href="#icon-resou"></use>
+            </svg>
+          </h1>
+          <el-row>
+            <el-col
+              class="searchList"
+              v-for="(item, i) in searchHotList"
+              :key="i"
+              @click="changeSearch(item)"
+            >
+              <span v-if="changeIcon(i)">
+                <svg class="icon" aria-hidden="true">
+                  <use :xlink:href="`#${NumIcon}`"></use>
+                </svg>
+              </span>
+              <span v-else class="last">{{ i + 1 }}</span>
+              <span
+                :class="{ active: i == 0, active2: i == 1, active3: i == 2 }"
+                >{{ item }}</span
+              >
+            </el-col>
+          </el-row>
+          <template #reference>
+            <el-input
+              v-model="search"
+              placeholder="请输入查询内容"
+              @keydown.enter="searchMusic"
+            />
+          </template>
+        </el-popover>
       </div>
     </div>
     <div class="nav-right">
@@ -86,6 +121,8 @@
 <script setup>
 import { ref, reactive, watchEffect } from "vue";
 import { useStore } from "vuex";
+import { searchHot } from "../../api/search";
+
 const store = useStore();
 const dialogFormVisible = ref(false);
 const formLabelWidth = "100px";
@@ -139,17 +176,102 @@ const handleLogin = async (formEl) => {
 };
 
 const search = ref("");
+const searchHotList = ref([]);
+const NumIcon = ref("");
+const changeIcon = (index) => {
+  if (index == 0) {
+    NumIcon.value = "icon-NO";
+  } else if (index == 1) {
+    NumIcon.value = "icon-NO1";
+  } else if (index == 2) {
+    NumIcon.value = "icon-NO2";
+  } else {
+    return false;
+  }
+  return true;
+};
+const searchMusic = () => {
+  if (search.value != "") {
+    store.commit("search/getKeywords", search.value);
+  } else {
+    ElMessage({
+      showClose: true,
+      message: "!不要试图搜索'空'!",
+      type: "warning",
+      duration: 5000,
+    });
+  }
+};
+searchHot().then((res) => {
+  res.result.hots.forEach((item) => {
+    searchHotList.value.push(item.first);
+  });
+});
+const changeSearch = (val) => {
+  search.value = val;
+  searchMusic();
+};
 </script>
 
 <style lang="scss" scoped>
+.h1 {
+  display: flex;
+  align-items: center;
+  .icon{
+    width: 45px;
+    height: 45px;
+    margin: 3px;
+  }
+  .icon2{
+    width: 25px;
+    height: 25px;
+    margin: 3px;
+  }
+}
+.searchList {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  &:hover {
+    background: rgb(178, 178, 255);
+  }
+  .icon {
+    width: 20px;
+    height: 20px;
+  }
+  .last {
+    margin-left: 8px;
+    margin-right: 12px;
+  }
+  .active {
+    font-size: 20px;
+    font-weight: 800;
+    padding-bottom: 3px;
+  }
+  .active2 {
+    font-size: 18px;
+    font-weight: 600;
+    padding-bottom: 3px;
+  }
+  .active3 {
+    font-size: 16px;
+    font-weight: 600;
+    padding-bottom: 3px;
+  }
+  span {
+    margin: 5px;
+  }
+}
 .elpop-button {
- display: flex;
- flex-direction: column;
- justify-content: space-between;
- .el-button{
-   width: 100%;
-   margin: 5px 0;
- }
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  .el-button {
+    width: 100%;
+    margin: 5px 0;
+  }
 }
 .nav-container {
   min-width: 1000px;
@@ -189,6 +311,7 @@ const search = ref("");
         color: white;
       }
       .icon {
+        cursor: pointer;
         height: 20px;
         width: 20px;
         color: rgb(255, 255, 255);

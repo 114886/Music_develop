@@ -17,14 +17,15 @@ import { reactive, ref } from "vue";
 const msg = reactive([
   { name: "个性推荐", path: "/home/findmusic/find", id: 1 },
   { name: "歌单", path: "/home/findmusic/musicList", id: 2 },
-  { name: "排行榜", path: "/h2", id: 3 },
-  { name: "歌手", path: "/h3", id: 4 },
+  { name: "排行榜", path: "/home/findmusic/rankingList", id: 3 },
 ]);
-
-const defaultActive = ref(sessionStorage.getItem('path') || '/home/findmusic/find')
 const savePath = (path) => {
-  sessionStorage.setItem('path', `${path}`)
-}
+  sessionStorage.setItem("path", `${path}`);
+};
+savePath("/home/findmusic/find");
+const defaultActive = ref(
+  sessionStorage.getItem("path") || "/home/findmusic/find"
+);
 </script>
 
 <style lang="scss" scoped>

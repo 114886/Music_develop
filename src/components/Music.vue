@@ -3,7 +3,7 @@
     <el-scrollbar>
       <div class="top-des">
         <div class="imgdes">
-          <img :src="MusicListCent.coverImgUrl" alt="稍等一下" />
+          <img :src="MusicListCent.coverImgUrl" />
         </div>
 
         <div class="right">
@@ -25,9 +25,24 @@
           </div>
 
           <div class="r-3">
-            <button>1</button>
-            <button>2</button>
-            <button>3</button>
+            <el-button type="danger" round @click="allPlay">
+              <svg class="icon" aria-hidden="true" ref="icon">
+                <use xlink:href="#icon-bofang"></use>
+              </svg>
+              播放全部
+            </el-button>
+            <el-button round>
+              <svg class="icon" aria-hidden="true" ref="icon">
+                <use xlink:href="#icon-shoucang"></use>
+              </svg>
+              收藏
+            </el-button>
+            <el-button round>
+              <svg class="icon" aria-hidden="true" ref="icon">
+                <use xlink:href="#icon-fenxiang1"></use>
+              </svg>
+              分享
+            </el-button>
           </div>
 
           <div class="r-4-1" v-if="MusicListCent.tags">
@@ -115,7 +130,7 @@ const showDate = (value) => {
   return formatDate(date, "yyyy-MM-dd");
 };
 
-let par = {
+let par = { 
   id: store.state.musicId,
 };
 
@@ -128,8 +143,15 @@ let isMore = ref(true);
 const MusicList = ref([]);
 const MusicListCent = ref({});
 const allMusic = ref([]);
+const allMusic2 = ref([]);
 
 getMusicList(par).then((res) => {
+  ElMessage({
+    showClose: true,
+    message: "很抱歉！某些音乐由于权限问题无法播放，请手动切换下一首。",
+    type: "warning",
+    duration: 5000,
+  });
   // console.log(res);
   MusicListCent.value = res.playlist;
   MusicList.value = res.playlist.tracks;
@@ -164,6 +186,7 @@ getMusicList(par).then((res) => {
     // if (!isMore.value) {
     //   store.commit("music/changePlaylist", res.songs);
     // }
+    allMusic2.value = res.songs;
     for (let i = 0; i < res.songs.length; i += 10) {
       allMusic.value.push(res.songs.slice(i, i + 10));
     }
@@ -175,13 +198,24 @@ let zhunbei = 1;
 const clickRow = (row) => {
   if (zhunbei === 1) {
     zhunbei++;
+    // console.log(allMusic2.value);
     if (isMore.value) {
       store.commit("music/changePlaylist", MusicList.value);
     } else {
-      store.commit("music/changePlaylist", res.songs);
+      store.commit("music/changePlaylist", allMusic2.value);
     }
   }
   store.dispatch("music/changePlayList", row);
+};
+
+const allPlay = () => {
+  if (isMore.value) {
+    store.commit("music/changePlaylist", MusicList.value);
+    store.commit("music/setPlayIndex", 0);
+  } else {
+    store.commit("music/changePlaylist", allMusic2.value);
+    store.commit("music/setPlayIndex", 0);
+  }
 };
 
 let num = 0;
@@ -267,6 +301,9 @@ const load = () => {
     .r-3 {
       display: flex;
       margin: 8px 0 0 0;
+      .icon {
+        margin-right: 5px;
+      }
     }
 
     .r-4-1 {

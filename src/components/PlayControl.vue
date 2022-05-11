@@ -12,25 +12,25 @@
           <span>{{ playlist[playCurrentIndex].name }}</span>
           <span>{{ playlist[playCurrentIndex].ar[0].name }}</span>
         </div>
-        <div class="download" v-show="playlist[0]">
+        <!-- <div class="download" v-show="playlist[0]">
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-xiazai3"></use>
           </svg>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="center">
       <div class="c-top">
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#icon-suiji1"></use>
+        <svg class="icon icon1" aria-hidden="true" @click="changeListIcon">
+          <use :xlink:href="`#${ListIcon}`"></use>
         </svg>
-        <svg class="icon" aria-hidden="true">
+        <svg class="icon" aria-hidden="true" @click="lastMusic">
           <use xlink:href="#icon-shangyishou"></use>
         </svg>
         <svg class="icon" aria-hidden="true" @click="playMusic">
           <use :xlink:href="palyButton"></use>
         </svg>
-        <svg class="icon" aria-hidden="true">
+        <svg class="icon" aria-hidden="true" @click="nextMusic">
           <use xlink:href="#icon-xiayishou"></use>
         </svg>
         <svg class="icon" aria-hidden="true">
@@ -122,10 +122,47 @@ const qwe = (row) => {
   palyButton.value = "#icon-zanting";
 };
 
+const lastMusic = () => {
+  if (playCurrentIndex.value == 0) {
+    ElMessage({
+      message: "当前已是第一首！",
+      type: "warning",
+    });
+  } else {
+    store.commit("music/setPlayIndex", playCurrentIndex.value - 1);
+  }
+};
+
+const nextMusic = () => {
+  if (playlist.value.length == 1) {
+    proxy.$refs.audio.currentTime = 0;
+  } else {
+    if (playlist.value.length - 1 == playCurrentIndex.value) {
+      store.commit("music/setPlayIndex", 0);
+    } else {
+      store.commit("music/setPlayIndex", playCurrentIndex.value + 1);
+    }
+  }
+};
+
 // 进度条
 const lastSecond = ref(0);
 const timeProgress = ref(0); // 进度条的位置
 const currentTime = ref(0);
+const ListIcon = ref("icon-24gl-repeat2");
+let a = 2;
+const changeListIcon = () => {
+  if (a === 1) {
+    ListIcon.value = "icon-24gl-repeat2";
+    a++;
+  } else if (a === 2) {
+    ListIcon.value = "icon-24gl-repeatOnce2";
+    a++;
+  } else {
+    ListIcon.value = "icon-24gl-shuffle";
+    a = 1;
+  }
+};
 const changeProgress = (e) => {
   const durationNum = store.state.durationNum;
   // console.log(e);
@@ -142,7 +179,9 @@ const timeupdate = () => {
   // 将当前播放时间保存到vuex  如果保存到vuex这步节流,会导致歌词不精准,误差最大有1s
   // this.$store.commit("updateCurrentTime", time);
   // console.log(lastSecond.value);
+
   time = Math.floor(time);
+  updateCurrentTime(time); // 歌词部分需求
   if (time !== lastSecond.value) {
     // console.log(time + "   " + 3);
     lastSecond.value = time;
@@ -154,16 +193,28 @@ const timeupdate = () => {
   }
   if (time == durationNum) {
     // console.log(playlist.value.length);
-    if (playlist.value.length == 1) {
+    if (ListIcon.value == "icon-24gl-repeat2") {
+      if (playlist.value.length == 1) {
+        proxy.$refs.audio.currentTime = 0;
+      } else {
+        if (playlist.value.length - 1 == playCurrentIndex.value) {
+          store.commit("music/setPlayIndex", 0);
+        } else {
+          store.commit("music/setPlayIndex", playCurrentIndex.value + 1);
+        }
+      }
+    } else if (ListIcon.value == "icon-24gl-repeatOnce2") {
       proxy.$refs.audio.currentTime = 0;
     } else {
-      if (playlist.value.length - 1 == playCurrentIndex.value) {
-        store.commit("music/setPlayIndex", 0);
-      } else {
-        store.commit("music/setPlayIndex", playCurrentIndex.value + 1);
-      }
+      let x = Math.floor(Math.random() * playlist.value.length);
+      store.commit("music/setPlayIndex", x);
     }
   }
+};
+
+// 歌词......
+const updateCurrentTime = (value) => {
+  store.commit("music/setCurrentTime", value);
 };
 //....
 
@@ -192,15 +243,18 @@ const changeVolume = (e) => {
 };
 
 //...
-
 const musicTable = ref(false);
 watch(
   playCurrentIndex,
   () => {
+    const qqqq = {
+      id: playlist.value[playCurrentIndex.value].id,
+    };
     store.commit(
       "getDurationNum",
       returnSecond(playlist.value[playCurrentIndex.value].dt)
     );
+    store.dispatch("music/getMusicLyric", qqqq);
   },
   { deep: true }
 );
@@ -215,9 +269,13 @@ watch(
     );
     // console.log(lastSecond);
     if (m === 1) {
+      const qqqq = {
+        id: playlist.value[playCurrentIndex.value].id,
+      };
       playMusic();
+      store.dispatch("music/getMusicLyric", qqqq);
     }
-    store.commit("music/setPlayIndex", playlist.value.length - 1);
+    // store.commit("music/setPlayIndex", playlist.value.length - 1);
     palyButton.value = "#icon-zanting";
     m = 0;
   },
@@ -253,6 +311,7 @@ const playMusic = () => {
     align-items: center;
     width: 150px;
     img {
+      cursor: pointer;
       width: 55px;
       height: 55px;
       border-radius: 10px;
@@ -279,6 +338,7 @@ const playMusic = () => {
       .download {
         padding-left: 15px;
         .icon {
+          cursor: pointer;
           width: 25px;
           height: 25px;
           color: #27d0d8;
@@ -293,6 +353,7 @@ const playMusic = () => {
     .c-top {
       margin-top: 6px;
       .icon {
+        cursor: pointer;
         width: 70px;
         height: 20px;
         color: #27d0d8;

@@ -2,6 +2,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 
+import './router/permission'
 import './style/index.scss'
 import animated from 'animate.css'
 //UI
