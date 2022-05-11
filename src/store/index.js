@@ -26,9 +26,11 @@ const store = createStore({
       router.push(`/musiclist/${id}`)
     },
     setToken(state, res) {
+      console.log(res);
       state.token = res.token
       localStorage.setItem('token', res.token)
       state.userprofile = res.profile
+      state.userprofile.userId = res.account.id
       sessionStorage.setItem('userprofile', JSON.stringify(res.profile))
     },
   },

@@ -45,6 +45,7 @@ export function request(config) {
     // }
     return Promise.reject(error)
   })
+  instance.defaults.withCredentials = true;
   // 发送真正的网络请求
   return instance(config);
 }

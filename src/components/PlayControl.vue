@@ -73,7 +73,7 @@
           :show-tooltip="false"
         />
       </div>
-      <svg class="icon" aria-hidden="true" @click="musicTable = true">
+      <svg class="icon" aria-hidden="true" @click="musicTable = true" style="cursor: pointer;">
         <use xlink:href="#icon-yinleliebiao"></use>
       </svg>
     </div>
