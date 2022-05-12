@@ -26,6 +26,10 @@ const router = createRouter({
           component: () => import('../views/Recommend/Recommendedsonglist.vue'),
         },
         {
+          path: '/shoucang',
+          component: () => import('../views/Collection/Collection.vue'),
+        },
+        {
           path: '/home/findmusic',
           redirect: '/home/findmusic/find',
           component: () => import('../views/FindMusic/FindM.vue'),

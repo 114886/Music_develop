@@ -29,7 +29,7 @@ const msg = reactive([
     id: 1,
   },
   { name: "视频", icon: "#icon-shipin", path: "/shiping", id: 2 },
-  { name: "收藏", icon: "#icon-shoucang", path: "/shoucang", id: 3 },
+  // { name: "收藏", icon: "#icon-shoucang", path: "/shoucang", id: 3 },
   { name: "每日推荐", icon: "#icon-dianzan", path: "/recommend", id: 4 },
   { name: "喜欢的音乐", icon: "#icon-yinle1", path: "/like", id: 5 },
 ]);
@@ -53,6 +53,7 @@ if (store.state.userprofile != undefined && userLikeId.value == 0) {
     uid: userId,
   };
   getUserLike(ppp).then((res) => {
+    // console.log(res);
     res.playlist.forEach((item) => {
       if (item.name == `${store.state.userprofile.nickname}-喜欢的音乐`) {
         userLikeId.value = item.id;
@@ -94,7 +95,9 @@ if (store.state.userprofile != undefined && userLikeId.value == 0) {
 }
 const goMusicList = (id) => {
   store.commit("getMusicId", id);
-  window.location.reload();
+  if (window.location.href.toString().indexOf("musiclist") >= 0) {
+    window.location.reload();
+  }
 };
 </script>
 

@@ -31,12 +31,23 @@
               </svg>
               播放全部
             </el-button>
-            <el-button round>
+            <!-- <el-button round @click="Collectsonglists(1, MusicListCent.id)">
               <svg class="icon" aria-hidden="true" ref="icon">
                 <use xlink:href="#icon-shoucang"></use>
               </svg>
               收藏
             </el-button>
+            <el-button round>
+              <svg
+                class="icon"
+                aria-hidden="true"
+                ref="icon"
+                style="color: red"
+              >
+                <use xlink:href="#icon-xihuan3"></use>
+              </svg>
+              收藏
+            </el-button> -->
             <el-button round>
               <svg class="icon" aria-hidden="true" ref="icon">
                 <use xlink:href="#icon-fenxiang1"></use>
@@ -112,9 +123,19 @@
 import { useStore } from "vuex";
 import { ref } from "vue";
 import { getMusic, getMusicList } from "../api/music";
+import { CollectOrCancel } from "../api/favorites";
 import { handleMusicTime, formatDate, handleNum } from "../plugins/utils";
 const store = useStore();
 
+// const Collectsonglists = (t, id) => {
+//   let xxx = {
+//     t: t,
+//     id: id,
+//   };
+//   CollectOrCancel(xxx).then((res) => {
+//     console.log(res);
+//   });
+// };
 const handleIndex = (index) => {
   index += 1;
   if (index < 10) {
@@ -144,6 +165,7 @@ const MusicList = ref([]);
 const MusicListCent = ref({});
 const allMusic = ref([]);
 const allMusic2 = ref([]);
+
 getMusicList(par).then((res) => {
   ElMessage({
     showClose: true,
