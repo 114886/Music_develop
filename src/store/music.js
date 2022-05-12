@@ -4,7 +4,7 @@ export default {
   namespaced: true,
   state: {
     playlist: [], // 播放列表
-    playCurrentIndex: 0, //当前播放索引
+    playCurrentIndex: undefined, //当前播放索引
     lyric: [],
     currentTime: 0,
     intervalId: 0

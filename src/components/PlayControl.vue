@@ -33,7 +33,20 @@
         <svg class="icon" aria-hidden="true" @click="nextMusic">
           <use xlink:href="#icon-xiayishou"></use>
         </svg>
-        <svg class="icon" aria-hidden="true">
+        <svg
+          v-if="store.state.userprofile != undefined && LikeIcon"
+          class="icon"
+          aria-hidden="true"
+          @click="AddCollectionStatus('del')"
+        >
+          <use xlink:href="#icon-xihuan3"></use>
+        </svg>
+        <svg
+          v-else
+          class="icon"
+          aria-hidden="true"
+          @click="AddCollectionStatus('add')"
+        >
           <use xlink:href="#icon-xihuan"></use>
         </svg>
       </div>
@@ -73,7 +86,12 @@
           :show-tooltip="false"
         />
       </div>
-      <svg class="icon" aria-hidden="true" @click="musicTable = true" style="cursor: pointer;">
+      <svg
+        class="icon"
+        aria-hidden="true"
+        @click="musicTable = true"
+        style="cursor: pointer"
+      >
         <use xlink:href="#icon-yinleliebiao"></use>
       </svg>
     </div>
@@ -106,6 +124,7 @@ import { computed, getCurrentInstance, ref, watch } from "vue";
 import { useStore } from "vuex";
 import MusicCont from "./MusicCont/index.vue";
 import { returnSecond, handleMusicTime } from "../plugins/utils";
+import { addSongToList } from "../api/Likesonglist";
 
 const MusicCenter = ref(false);
 
@@ -126,7 +145,7 @@ const lastMusic = () => {
   if (playCurrentIndex.value == 0) {
     ElMessage({
       message: "当前已是第一首！",
-      type: "warning",
+      type: "error",
     });
   } else {
     store.commit("music/setPlayIndex", playCurrentIndex.value - 1);
@@ -141,6 +160,44 @@ const nextMusic = () => {
       store.commit("music/setPlayIndex", 0);
     } else {
       store.commit("music/setPlayIndex", playCurrentIndex.value + 1);
+    }
+  }
+};
+const aoo = ref({
+  op: "add",
+  pid: JSON.parse(sessionStorage.getItem("userLikeId")) || undefined,
+  tracks: 0,
+});
+const LikeIcon = ref(false);
+const AddCollectionStatus = (str) => {
+  if (aoo.value.pid != undefined && playlist.value[playCurrentIndex.value]) {
+    aoo.value.op = str;
+    aoo.value.tracks = playlist.value[playCurrentIndex.value].id;
+    // console.log(aoo.value);
+    addSongToList(aoo.value).then((res) => {
+      // console.log(res);
+      if (res.status == 200) {
+        ElMessage({
+          message: "操作成功！",
+          type: "success",
+        });
+      }
+      if (str == "add") {
+        LikeIcon.value = true;
+      } else {
+        LikeIcon.value = false;
+      }
+    });
+  } else {
+    if (aoo.value.pid == undefined && playlist.value[playCurrentIndex.value]) {
+      ElMessage({
+        showClose: true,
+        message: "您的操作实在是太快了！请您刷新重试~十分抱歉",
+        type: "warning",
+        duration: 5000,
+      });
+    } else {
+      ElMessage.error("请您登录！并且不要对空歌曲进行任何操作！");
     }
   }
 };
@@ -247,6 +304,15 @@ const musicTable = ref(false);
 watch(
   playCurrentIndex,
   () => {
+    store.state.ComparisonList.trackIds.forEach((item) => {
+      // console.log(item.id);
+      if (item.id == playlist.value[playCurrentIndex.value].id) {
+        LikeIcon.value = true;
+      } else {
+        LikeIcon.value = false;
+      }
+    });
+    // console.log(playlist.value[playCurrentIndex.value]);
     const qqqq = {
       id: playlist.value[playCurrentIndex.value].id,
     };

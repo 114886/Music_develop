@@ -130,7 +130,7 @@ const showDate = (value) => {
   return formatDate(date, "yyyy-MM-dd");
 };
 
-let par = { 
+let par = {
   id: store.state.musicId,
 };
 
@@ -144,14 +144,32 @@ const MusicList = ref([]);
 const MusicListCent = ref({});
 const allMusic = ref([]);
 const allMusic2 = ref([]);
-
 getMusicList(par).then((res) => {
   ElMessage({
     showClose: true,
     message: "很抱歉！某些音乐由于权限问题无法播放，请手动切换下一首。",
     type: "warning",
-    duration: 5000,
+    duration: 3000,
   });
+  if (
+    store.state.musicId == JSON.parse(sessionStorage.getItem("userLikeId")) &&
+    store.state.panduanindex == 1
+  ) {
+    store.commit("changepanduanindex", 2);
+    ElMessageBox.alert(
+      "由于接口限制原因，新 收藏/取消收藏 的歌曲需要您重新登录才可以看到。",
+      "温馨提示：",
+      {
+        confirmButtonText: "OK",
+        callback: (action) => {
+          ElMessage({
+            type: "info",
+            message: `温馨提示: ${action}`,
+          });
+        },
+      }
+    );
+  }
   // console.log(res);
   MusicListCent.value = res.playlist;
   MusicList.value = res.playlist.tracks;

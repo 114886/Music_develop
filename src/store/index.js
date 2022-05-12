@@ -11,9 +11,17 @@ const store = createStore({
     isPlay: false,
     userprofile: JSON.parse(sessionStorage.getItem('userprofile')) || undefined,
     token: localStorage.getItem('token') || undefined,
-    durationNum: 0
+    durationNum: 0,
+    ComparisonList: JSON.parse(sessionStorage.getItem('ComparisonList')) || {},
+    panduanindex: 1
   },
   mutations: {
+    changepanduanindex(state, val) {
+      state.panduanindex = val
+    },
+    changeComparisonList(state, value) {
+      state.ComparisonList = value
+    },
     getDurationNum(state, value) {
       state.durationNum = value
     },
@@ -26,11 +34,13 @@ const store = createStore({
       router.push(`/musiclist/${id}`)
     },
     setToken(state, res) {
-      console.log(res);
+      // console.log(res);
       state.token = res.token
       localStorage.setItem('token', res.token)
       state.userprofile = res.profile
-      state.userprofile.userId = res.account.id
+      if (res.account) {
+        state.userprofile.userId = res.account.id
+      }
       sessionStorage.setItem('userprofile', JSON.stringify(res.profile))
     },
   },
@@ -41,6 +51,7 @@ const store = createStore({
           commit('setToken', res)
           setTokenTime()
           router.replace('/')
+          window.location.reload()
           resolve()
         }).catch(err => {
           reject(err)
