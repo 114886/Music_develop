@@ -64,6 +64,7 @@ const store = createStore({
       localStorage.clear()
       sessionStorage.clear()
       router.replace('/')
+      window.location.reload()
     }
   },
   modules: {

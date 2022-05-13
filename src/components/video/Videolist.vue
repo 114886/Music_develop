@@ -6,6 +6,7 @@
       v-for="item in VideoListClassification"
       :key="item.id"
       @click="ChangeVideoList(item.id)"
+      v-show="item.name != 'MV'"
     >
       {{ item.name }}
     </div>
@@ -20,11 +21,10 @@
     <div class="v-list" v-for="item in VideoList" :key="item.data.vid">
       <img :src="item.data.coverUrl" alt="" @click="goToVideo(item.data.vid)" />
       <div class="v-content">
-        <span class="top">{{ item.data.title || item.data.name }}</span>
+        <span class="top">{{ item.data.title }}</span>
         <span class="bom" v-if="item.data.creator"
           >by {{ item.data.creator.nickname }}</span
         >
-        <span class="bom" v-else>by {{ item.data.artists[0].name }}</span>
       </div>
     </div>
   </div>

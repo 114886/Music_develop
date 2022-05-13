@@ -22,6 +22,14 @@ const router = createRouter({
           component: () => import('../components/video/Video.vue'),
         },
         {
+          path: '/allMv',
+          component: () => import('../components/video/AllMv.vue'),
+        },
+        {
+          path: '/mv/:id',
+          component: () => import('../components/video/MVplay.vue'),
+        },
+        {
           path: '/search/:id',
           component: () => import('../views/Search/searchMusic.vue'),
         },

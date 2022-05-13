@@ -34,7 +34,7 @@
         </div>
       </div>
     </div>
-    <div class="otherContent">评论区（暂未实现）</div>
+    <!-- <div class="otherContent">评论区（暂未实现）</div> -->
   </div>
 </template>
 
@@ -128,11 +128,11 @@ watchEffect(() => {
     justify-content: center;
     .cipan {
       margin-top: 60px;
-      width: 400px;
+      width: 500px;
       position: relative;
       .needle {
         position: relative;
-        left: 40%;
+        left: 34%;
         width: 120px;
         height: 72px;
         transition: all 1s;
@@ -146,8 +146,8 @@ watchEffect(() => {
         animation: rotate 10s linear infinite;
       }
       .disc {
-        width: 273px;
-        height: 273px;
+        width: 300px;
+        height: 300px;
         position: relative;
         top: -12px;
         img {
@@ -155,9 +155,9 @@ watchEffect(() => {
         }
         .musicAvatar {
           position: absolute;
-          top: 40px;
-          left: 40px;
-          width: 190px;
+          top: 48px;
+          left: 45px;
+          width: 210px;
           z-index: -1;
         }
       }
@@ -182,7 +182,7 @@ watchEffect(() => {
       }
       .lyrics {
         width: 100%;
-        height: 275px;
+        height: 410px;
         font-size: 12px;
         text-align: center;
         overflow-y: scroll;

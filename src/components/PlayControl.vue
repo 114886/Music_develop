@@ -229,6 +229,10 @@ const changeProgress = (e) => {
   proxy.$refs.audio.currentTime = currentTime.value;
 };
 const timeupdate = () => {
+  if (!proxy.$refs.audio.paused) {
+    palyButton.value = "#icon-zanting";
+    store.commit("changeIsPlay", true);
+  }
   const durationNum = store.state.durationNum;
   // console.log(durationNum);
   let time = proxy.$refs.audio.currentTime;
