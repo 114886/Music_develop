@@ -14,8 +14,12 @@ const router = createRouter({
       component: () => import('../views/Home.vue'),
       children: [
         {
-          path:'/musiclist/:id',
+          path: '/musiclist/:id',
           component: () => import('../components/Music.vue'),
+        },
+        {
+          path: '/video/:id',
+          component: () => import('../components/video/Video.vue'),
         },
         {
           path: '/search/:id',
@@ -26,9 +30,13 @@ const router = createRouter({
           component: () => import('../views/Recommend/Recommendedsonglist.vue'),
         },
         {
-          path: '/shoucang',
-          component: () => import('../views/Collection/Collection.vue'),
+          path: '/video',
+          component: () => import('../views/Videocollection/Video.vue'),
         },
+        // {
+        //   path: '/shoucang',
+        //   component: () => import('../views/Collection/Collection.vue'),
+        // },
         {
           path: '/home/findmusic',
           redirect: '/home/findmusic/find',

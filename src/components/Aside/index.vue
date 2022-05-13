@@ -28,7 +28,7 @@ const msg = reactive([
     path: "/home/findmusic",
     id: 1,
   },
-  { name: "视频", icon: "#icon-shipin", path: "/shiping", id: 2 },
+  { name: "视频", icon: "#icon-shipin", path: "/video", id: 2 },
   // { name: "收藏", icon: "#icon-shoucang", path: "/shoucang", id: 3 },
   { name: "每日推荐", icon: "#icon-dianzan", path: "/recommend", id: 4 },
   { name: "喜欢的音乐", icon: "#icon-yinle1", path: "/like", id: 5 },
