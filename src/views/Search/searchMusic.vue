@@ -80,9 +80,11 @@ const handleCurrentChange = (val) => {
 };
 
 const clickRow = (row) => {
+  let x = store.state.music.playlist.length;
   store.dispatch("music/changePlayList", row);
-  // console.log(store.state.music.playlist.length);
-  store.commit("music/setPlayIndex", store.state.music.playlist.length - 1);
+  if (x != store.state.music.playlist.length) {
+    store.commit("music/setPlayIndex", store.state.music.playlist.length - 1);
+  }
 };
 
 const handleIndex = (index) => {

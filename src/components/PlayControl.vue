@@ -308,14 +308,20 @@ const musicTable = ref(false);
 watch(
   playCurrentIndex,
   () => {
-    store.state.ComparisonList.trackIds.forEach((item) => {
-      // console.log(item.id);
-      if (item.id == playlist.value[playCurrentIndex.value].id) {
-        LikeIcon.value = true;
-      } else {
-        LikeIcon.value = false;
+    if (store.state.userprofile != undefined) {
+      for (let i = 0; i < store.state.ComparisonList.trackIds.length; i++) {
+        if (
+          store.state.ComparisonList.trackIds[i].id ==
+          playlist.value[playCurrentIndex.value].id
+        ) {
+          LikeIcon.value = true;
+          break;
+        } else {
+          LikeIcon.value = false;
+        }
       }
-    });
+    }
+
     // console.log(playlist.value[playCurrentIndex.value]);
     const qqqq = {
       id: playlist.value[playCurrentIndex.value].id,
