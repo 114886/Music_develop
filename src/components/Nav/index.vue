@@ -3,7 +3,18 @@
     <div class="nav-left">
       <img src="/logo.47591c5c.png" />
     </div>
+
     <div class="nav-center">
+      <div class="back" @click="router.go(-1)">
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-left"></use>
+        </svg>
+      </div>
+      <div class="back" @click="router.go(1)">
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-right"></use>
+        </svg>
+      </div>
       <div class="buttons">
         <svg class="icon" aria-hidden="true" @click="searchMusic">
           <use xlink:href="#icon-sousuo"></use>
@@ -122,6 +133,7 @@
 import { ref, reactive, watchEffect } from "vue";
 import { useStore } from "vuex";
 import { searchHot } from "../../api/search";
+import router from "../../router";
 
 const store = useStore();
 const dialogFormVisible = ref(false);
@@ -217,12 +229,12 @@ const changeSearch = (val) => {
 .h1 {
   display: flex;
   align-items: center;
-  .icon{
+  .icon {
     width: 45px;
     height: 45px;
     margin: 3px;
   }
-  .icon2{
+  .icon2 {
     width: 25px;
     height: 25px;
     margin: 3px;
@@ -294,7 +306,25 @@ const changeSearch = (val) => {
   }
   .nav-center {
     margin-left: -450px;
+    display: flex;
+    align-items: center;
+    .back {
+      display: flex;
+      background: #00000011;
+      height: 30px;
+      width: 30px;
+      border-radius: 50%;
+      margin: 0 5px;
+      align-items: center;
+      cursor: pointer;
+      justify-content: center;
+      .icon {
+        color: rgb(228, 228, 228);
+        margin-bottom: 2px;
+      }
+    }
     .buttons {
+      margin-left: 7px;
       display: flex;
       justify-content: space-around;
       align-items: center;
