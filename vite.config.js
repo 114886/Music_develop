@@ -15,17 +15,18 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()],
     }),
   ],
+  base: './',
   server: {
     host: '0.0.0.0',
-    port: 3000,
+    port: '3000',
     open: true,
-    strictPort: false,
     proxy: {
+      // 选项写法
       '/api': {
-        target: 'http://localhost', // http://192.168.1.1:20/
+        target: 'http://49.233.5.229:4000/', 
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '') // 路径重写
-      }
+        rewrite: (path) => path.replace(/^\/api/, '')
+      },
     }
   }
 })

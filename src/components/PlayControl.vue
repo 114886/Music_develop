@@ -174,20 +174,24 @@ const AddCollectionStatus = (str) => {
     aoo.value.op = str;
     aoo.value.tracks = playlist.value[playCurrentIndex.value].id;
     // console.log(aoo.value);
-    addSongToList(aoo.value).then((res) => {
-      // console.log(res);
-      if (res.status == 200) {
-        ElMessage({
-          message: "操作成功！",
-          type: "success",
-        });
-      }
-      if (str == "add") {
-        LikeIcon.value = true;
-      } else {
-        LikeIcon.value = false;
-      }
-    });
+    addSongToList(aoo.value)
+      .then((res) => {
+        // console.log(res);
+        if (res.status == 200) {
+          ElMessage({
+            message: "操作成功！",
+            type: "success",
+          });
+        }
+        if (str == "add") {
+          LikeIcon.value = true;
+        } else {
+          LikeIcon.value = false;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   } else {
     if (aoo.value.pid == undefined && playlist.value[playCurrentIndex.value]) {
       ElMessage({

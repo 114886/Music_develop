@@ -6,9 +6,9 @@ import { ElMessage } from 'element-plus'
 export function request(config) {
   // 创建axios的实例
   const instance = axios.create({
-    baseURL: 'http://localhost:4000',
-    timeout: 5000
-  })
+    baseURL: '/api',
+    timeout: 10000
+  })  
   // 请求拦截器配置
   instance.interceptors.request.use(config => {
     if (localStorage.getItem('token')) {

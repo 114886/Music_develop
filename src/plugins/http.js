@@ -5,7 +5,6 @@ const http = {
       method: 'get',
       url: url
     }
-    // console.log(params);
     if (params) config.params = params
     return request(config)
   },

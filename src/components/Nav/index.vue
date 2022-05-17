@@ -215,6 +215,7 @@ const searchMusic = () => {
   }
 };
 searchHot().then((res) => {
+  // console.log(res);
   res.result.hots.forEach((item) => {
     searchHotList.value.push(item.first);
   });
