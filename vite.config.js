@@ -26,7 +26,7 @@ export default defineConfig({
     proxy: {
       // 选项写法
       '/api': {
-        target: 'http://www.codeman.ink:3000',
+        target: 'http://49.233.5.229:4000/',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       },
