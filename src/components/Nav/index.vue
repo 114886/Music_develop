@@ -33,14 +33,26 @@
               class="searchList"
               v-for="(item, i) in searchHotList"
               :key="i"
-              @click="changeSearch(item)"
+              @click="() => changeSearch(item)"
             >
-              <span v-if="changeIcon(i)">
+              <span v-if="i == 0">
                 <svg class="icon" aria-hidden="true">
-                  <use :xlink:href="`#${NumIcon}`"></use>
+                  <use xlink:href="#icon-NO"></use>
                 </svg>
               </span>
-              <span v-else class="last">{{ i + 1 }}</span>
+              <span v-if="i == 1">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#icon-NO1"></use>
+                </svg>
+              </span>
+              <span v-if="i == 2">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#icon-NO2"></use>
+                </svg>
+              </span>
+              <span v-if="i != 0 && i != 1 && i != 2" class="last">{{
+                i + 1
+              }}</span>
               <span
                 :class="{ active: i == 0, active2: i == 1, active3: i == 2 }"
                 >{{ item }}</span
@@ -189,20 +201,7 @@ const handleLogin = async (formEl) => {
 };
 
 const search = ref("");
-const searchHotList = ref([]);
-const NumIcon = ref("");
-const changeIcon = (index) => {
-  if (index == 0) {
-    NumIcon.value = "icon-NO";
-  } else if (index == 1) {
-    NumIcon.value = "icon-NO1";
-  } else if (index == 2) {
-    NumIcon.value = "icon-NO2";
-  } else {
-    return false;
-  }
-  return true;
-};
+const searchHotList = reactive([]);
 const searchMusic = () => {
   if (search.value != "") {
     store.commit("search/getKeywords", search.value);
@@ -216,13 +215,9 @@ const searchMusic = () => {
   }
 };
 searchHot().then((res) => {
-  console.log(res);
-  let qq = [];
   res.result.hots.forEach((item) => {
-    qq.push(item.first);
+    searchHotList.push(item.first);
   });
-  console.log(qq);
-  searchHotList.value = [...qq];
 });
 const changeSearch = (val) => {
   search.value = val;

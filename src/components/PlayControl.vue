@@ -193,7 +193,11 @@ const AddCollectionStatus = (str) => {
         console.log(err);
       });
   } else {
-    if (aoo.value.pid == undefined && playlist.value[playCurrentIndex.value]) {
+    if (
+      aoo.value.pid == undefined &&
+      playlist.value[playCurrentIndex.value] &&
+      store.state.userprofile
+    ) {
       ElMessage({
         showClose: true,
         message: "您的操作实在是太快了！请您刷新重试~十分抱歉",

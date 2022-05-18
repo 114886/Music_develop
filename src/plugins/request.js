@@ -6,7 +6,7 @@ import { ElMessage } from 'element-plus'
 export function request(config) {
   // 创建axios的实例
   const instance = axios.create({
-    baseURL: 'http://www.codeman.ink:3000',
+    baseURL: 'http://localhost:4000',
     timeout: 10000
   })  
   // 请求拦截器配置
