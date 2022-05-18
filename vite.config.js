@@ -13,9 +13,12 @@ export default defineConfig({
     }),
     Components({
       resolvers: [ElementPlusResolver()],
-    }),
+    })
   ],
   base: './',
+  build: {
+    target: "es2015", // 默认 "modules"
+  },
   server: {
     host: '0.0.0.0',
     port: '3000',
@@ -23,10 +26,13 @@ export default defineConfig({
     proxy: {
       // 选项写法
       '/api': {
-        target: 'http://49.233.5.229:4000/', 
+        target: 'http://www.codeman.ink:3000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       },
     }
+  },
+  optimizeDeps: {
+    include: ["axios"]
   }
 })

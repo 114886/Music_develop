@@ -48,21 +48,13 @@ const params2 = {
   limit: 10,
 };
 
-getPersonalized(params2)
-  .then((res) => {
-    preList.value = res.result;
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+// getPersonalized(params2).then((res) => {
+//   preList.value = res.result;
+// });
 
-getBanner(params)
-  .then((res) => {
-    bannerImage.value = res.banners;
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+// getBanner(params).then((res) => {
+//   bannerImage.value = res.banners;
+// });
 
 const bannerImage = ref([]);
 const preList = ref([]);

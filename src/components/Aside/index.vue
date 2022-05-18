@@ -65,18 +65,11 @@ if (store.state.userprofile != undefined && userLikeId.value == 0) {
         id: userLikeId.value,
       };
       // console.log(userLikeId.value);
-      getMusicList(par)
-        .then((res) => {
-          // console.log(res.playlist);
-          sessionStorage.setItem(
-            "ComparisonList",
-            JSON.stringify(res.playlist)
-          );
-          store.commit("changeComparisonList", res.playlist);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      getMusicList(par).then((res) => {
+        // console.log(res.playlist);
+        sessionStorage.setItem("ComparisonList", JSON.stringify(res.playlist));
+        store.commit("changeComparisonList", res.playlist);
+      });
     } else {
       let pam = {
         name: store.state.userprofile.nickname + "-喜欢的音乐",

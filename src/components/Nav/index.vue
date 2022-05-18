@@ -151,7 +151,8 @@ watchEffect(() => {
     user.value.nickname = store.state.userprofile.nickname;
     user.value.disable = true;
   } else {
-    user.value.avatarUrl = "circleUrl";
+    user.value.avatarUrl =
+      "https://img2.baidu.com/it/u=3973855039,4170930478&fm=253&fmt=auto&app=138&f=PNG?w=500&h=500";
     user.value.nickname = "未登录";
     user.value.disable = false;
   }
@@ -215,10 +216,13 @@ const searchMusic = () => {
   }
 };
 searchHot().then((res) => {
-  // console.log(res);
+  console.log(res);
+  let qq = [];
   res.result.hots.forEach((item) => {
-    searchHotList.value.push(item.first);
+    qq.push(item.first);
   });
+  console.log(qq);
+  searchHotList.value = [...qq];
 });
 const changeSearch = (val) => {
   search.value = val;
